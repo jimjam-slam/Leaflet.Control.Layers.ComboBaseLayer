@@ -18,6 +18,10 @@ var my_combo_control = L.control.layers.comboBaseLayer(
   my_base_layers, my_overlays, { position: 'topleft' }).addTo(map);
 ```
 
+The plugin will automatically populate menus according to the possible options given in the named layers, and it will manage layer attachment according to the selected options.
+
+## Limitations
+
 You should name your base layers delimited by underscores, like `Option 1_Option 2_Option 3`. At present, the plugin only supports 3 options—no more or less—and they must be delimited by underscores (which can't be escaped). For example:
 
 ```js
