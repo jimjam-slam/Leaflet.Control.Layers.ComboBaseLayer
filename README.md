@@ -39,7 +39,7 @@ L.Control.Layers.include({
   }
 
 }
-```js
+```
     
 (But I'd like to add some sensible defaults, once I can decide on some!)
 
