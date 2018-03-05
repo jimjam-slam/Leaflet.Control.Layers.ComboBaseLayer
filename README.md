@@ -47,4 +47,4 @@ L.Control.Layers.include({
     
 (But I'd like to add some sensible defaults, once I can decide on some!)
 
-Although I can't necessarily support your use of this plugin, feel free to [submit an issue](https://github.com/rensa/Leaflet.Control.Layers.ComboBaseLayer) or [get in touch](https://twitter.com/rensa_co).
+Please feel free to [submit an issue](https://github.com/rensa/Leaflet.Control.Layers.ComboBaseLayer) if something's not working right, or [get in touch](https://twitter.com/rensa_co)! Suggestions, PRs and complaints are all welcome 😅
