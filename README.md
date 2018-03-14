@@ -1,6 +1,8 @@
 # Leaflet.Control.Layers.ComboBaseLayer
 A layer control for Leaflet that breaks base layer selection across several radio groups.
 
+![ComboBaseLayer screenshot](screenshot1.png?raw=true)
+
 ## Usage
 
 Download the JavaScript file and add it to your map's HTML header:
