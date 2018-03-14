@@ -34,11 +34,11 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
 
     // convert the baselayer list into an array of three
     var className = 'leaflet-control-layers';
-    this._baseLayersList = [
-      this._baseLayersList,
-      L.DomUtil.create('div', className + '-base', this._form),
-      L.DomUtil.create('div', className + '-base', this._form)
-    ]
+    this._baseLayersList = [ this._baseLayersList ];
+    for (i = 1; i < this._menu_count; i++) {
+      this._baseLayersList.push(
+        L.DomUtil.create('div', className + '-base', this._form));
+    }
 
     // add classes to distinguish the three
     for (i = 0; i < this._baseLayersList.length; i++)
@@ -132,10 +132,11 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
     } else
     {  
       /* here's where ComboBaseLayer gets really different: we don't necessarily
-         need to create a dom element for each layer. there are 3 potential
+         need to create a dom element for each layer. there are n potential
          new elements. we need to check whether each is needed (ie. no
          previous */
-      var name_fragments = obj.name.split("_", 3);
+      var name_fragments = obj.name.split(
+      this._menu_delimiter, this._menu_count);
       var inputs_toadd = [];
 
       nextFragment:
@@ -169,6 +170,12 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
 
         var name = document.createElement('span');
         name.innerHTML = ' ' + name_fragments[i]; // TODO - add a 'long name'?
+        var description = document.createElement('p');
+        if (this._matches[name_fragments[i]] !== undefined) {
+          description.innerHTML = this._matches[name_fragments[i]];
+        } else {
+          description.innerHTML = name_fragments[i];
+        }
 
         // Helps prevent layer control flicker when checkboxes are disabled
         // https://github.com/Leaflet/Leaflet/issues/2771
@@ -178,6 +185,7 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
         label.appendChild(holder);
         holder.appendChild(input);
         holder.appendChild(name);
+        holder.appendChild(description)
         this._baseLayersList[i].appendChild(label);
         inputs_toadd.push(input);
       }
@@ -245,19 +253,18 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
       baseFreqs[x] += 1;
     });
     for (layer_i in baseFreqs) {
-      if (baseFreqs[layer_i] < 3) {
+      if (baseFreqs[layer_i] < this._menu_count) {
         delete baseFreqs[layer_i];
       }
     }
     notSelectedBaseLayers = notSelectedBaseLayers.filter(this._onlyUnique);
     
     // now compile the lists of layers and iterate through map
-    baseFreqs = Object.keys(baseFreqs).map(Number);
-    for (i = 0; i < baseFreqs.length; i++) {
-      addedBaseLayers.push(this._getLayer(baseFreqs[i]).layer);
-    }
     for (i = 0; i < notSelectedBaseLayers.length; i++) {
       removedBaseLayers.push(this._getLayer(notSelectedBaseLayers[i]).layer);
+    }
+    for (i = 0; i < baseFreqs.length; i++) {
+      addedBaseLayers.push(this._getLayer(baseFreqs[i]).layer);
     }
 
     // 3) finally, iterate through the layers and add or remove from map
@@ -340,6 +347,30 @@ L.Control.Layers.ComboBaseLayer = L.Control.Layers.extend({
   }
   
 });
+
+// set sensible defaults for our new options if they aren't defined
+L.Control.Layers.ComboBaseLayer.addInitHook(function() {
+  // initialise matches (empty if undefined)
+  if (this.options.matches !== undefined) {
+    this._matches = this.options.matches;
+  } else {
+    this._matches = {}
+  }
+
+  // set menu count to 3 if undefined
+  if (this.options.menu_count !== undefined) {
+    this._menu_count = this.options.menu_count;
+  } else {
+    this._menu_count = 3;
+  }
+
+  // set menu delimiter to '|' if undefined
+  if (this.options.menu_delimiter !== undefined) {
+    this._menu_delimiter = this.options.menu_delimiter;
+  } else {
+    this._menu_delimiter = '|';
+  }
+})
 
 L.control.layers.comboBaseLayer = function(baseLayers, overlays, options) {
   return new L.Control.Layers.ComboBaseLayer(baseLayers, overlays, options);
